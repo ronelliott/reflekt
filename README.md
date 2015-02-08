@@ -1,5 +1,5 @@
 # reflekt
-[![Build Status](https://travis-ci.org/ronelliott/reflekt.png)](https://travis-ci.org/tmont/sahara)
+[![Build Status](https://travis-ci.org/ronelliott/reflekt.png)](https://travis-ci.org/ronelliott/reflekt)
 [![NPM version](https://badge.fury.io/js/reflekt.png)](http://badge.fury.io/js/reflekt)
 
 reflekt supports function argument injection, parsing the method signature to determine dependencies.
