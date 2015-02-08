@@ -25,6 +25,18 @@ describe('Api', function() {
         });
     });
 
+    describe('caller', function() {
+        it('should return a call generator', function(done) {
+            var resolve = sinon.spy(),
+                spy = sinon.spy(),
+                caller = api.caller(resolve);
+            caller(spy);
+            spy.called.should.be.ok;
+            resolve.called.should.not.be.ok;
+            done();
+        });
+    });
+
     describe('decorate', function() {
         it('should return a decorated function', function(done) {
             var resolve = sinon.spy(),

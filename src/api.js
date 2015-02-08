@@ -52,8 +52,15 @@ function call(fn, resolver) {
     return func;
 }
 
+function caller(resolver) {
+    return function caller(fn) {
+        call(fn, resolver);
+    };
+}
+
 module.exports = {
     args:           args,
     decorate:       decorate,
     call:           call,
+    caller:         caller,
 };

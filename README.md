@@ -45,3 +45,12 @@ decorated();
 > 'got me a bar'
 ```
 
+```javascript
+var caller = reflekt.caller(resolve);
+caller(foo);
+```
+
+```bash
+> 'got me a bar'
+```
+

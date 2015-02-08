@@ -4,7 +4,7 @@ var should = require('should'),
     reflekt = require('../src');
 
 describe('reflekt', function() {
-    it('should work correctly', function(done) {
+    it('call should work correctly', function(done) {
         var called = false,
             items = { bar: 'foo' },
             resolve = new reflekt.ObjectResolver(items);
@@ -40,6 +40,25 @@ describe('reflekt', function() {
         reflekt.call(['happy', 'joy', asdf], resolve);
         called.should.be.ok;
 
+        done();
+    });
+
+
+    it('caller should work correctly', function(done) {
+        var called = false,
+            items = { bar: 'foo', dar: 'yup' },
+            resolve = new reflekt.ObjectResolver(items),
+            caller = reflekt.caller(resolve);
+
+        function asdf(bar, dar) {
+            called = true;
+            bar.should.equal('foo');
+            dar.should.equal('yup');
+        }
+
+        called.should.not.be.ok;
+        caller(asdf);
+        called.should.be.ok;
         done();
     });
 });
