@@ -17,7 +17,5 @@
     "should": "^4.6.5",
     "sinon": "^1.12.2"
   },
-  "dependencies": {
-    "extend": "^2.0.0"
-  }
+  "dependencies": {}
 }
