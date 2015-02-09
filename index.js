@@ -1,7 +1,7 @@
 'use strict';
 
 function isArray(ar) {
-  return Array.isArray(ar) || (typeof ar === 'object' && Object.prototype.toString.call(ar) === '[object Array]');
+    return Array.isArray(ar) || (typeof ar === 'object' && Object.prototype.toString.call(ar) === '[object Array]');
 }
 
 var FN_ARGS        = /^function\s*[^\(]*\(\s*([^\)]*)\)/m,
