@@ -83,6 +83,23 @@ describe('reflekt', function() {
         done();
     });
 
+    it('should automatically translate object resolvers', function(done) {
+        var called = false,
+            items = { bar: 'foo', dar: 'yup' },
+            caller = reflekt.caller(items);
+
+        function asdf(bar, dar) {
+            called = true;
+            bar.should.equal('foo');
+            dar.should.equal('yup');
+        }
+
+        called.should.not.be.ok;
+        caller(asdf);
+        called.should.be.ok;
+        done();
+    });
+
     describe('api', function() {
         describe('args', function() {
             it('should parse functions with comments correctly', function(done) {
@@ -112,6 +129,22 @@ describe('reflekt', function() {
                 caller(spy);
                 spy.called.should.be.ok;
                 resolve.called.should.not.be.ok;
+                done();
+            });
+        });
+
+        describe('injections', function() {
+            it('should return the requested args', function(done) {
+                var resolve = sinon.spy(function() { return 'foo'; }),
+                    injections = reflekt.injections([ 'foo' ], resolve);
+                injections.should.eql([ 'foo' ]);
+                done();
+            });
+
+            it('should translate the resolver correctly', function(done) {
+                var resolve = { foo: 'foo' },
+                    injections = reflekt.injections([ 'foo' ], resolve);
+                injections.should.eql([ 'foo' ]);
                 done();
             });
         });

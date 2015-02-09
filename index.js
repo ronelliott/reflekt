@@ -35,8 +35,9 @@ function args(fn) {
 }
 
 function injections(fn, resolver) {
-    var params = isArray(fn) ? fn : args(fn);
-    return params.map(resolver.bind(resolver));
+    var params = isArray(fn) ? fn : args(fn),
+        resolve = (typeof resolver === 'object') ? ObjectResolver(resolver) : resolver;
+    return params.map(resolve.bind(resolve));
 }
 
 function decorate(fn, resolver, context) {
@@ -72,4 +73,5 @@ module.exports = {
     decorate:       decorate,
     call:           call,
     caller:         caller,
+    injections:     injections,
 };
