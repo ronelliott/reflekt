@@ -31,7 +31,7 @@ function injections(fn, resolver) {
     return params.map(resolver.bind(resolver));
 }
 
-function decorate(fn, resolver) {
+function decorate(fn, resolver, context) {
     var params = [];
 
     if (isArray(fn)) {
@@ -42,19 +42,19 @@ function decorate(fn, resolver) {
     }
 
     return function() {
-        fn.apply(fn, params);
+        fn.apply(context || fn, params);
     };
 }
 
-function call(fn, resolver) {
-    var func = decorate(fn, resolver);
+function call(fn, resolver, context) {
+    var func = decorate(fn, resolver, context);
     func();
     return func;
 }
 
 function caller(resolver) {
-    return function caller(fn) {
-        call(fn, resolver);
+    return function caller(fn, context) {
+        call(fn, resolver, context);
     };
 }
 

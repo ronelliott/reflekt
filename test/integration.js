@@ -61,4 +61,24 @@ describe('reflekt', function() {
         called.should.be.ok;
         done();
     });
+
+    it('contexts should work correctly', function(done) {
+        var called = false,
+            context = { foo: 'foo' },
+            items = { bar: 'foo', dar: 'yup' },
+            resolve = new reflekt.ObjectResolver(items),
+            caller = reflekt.caller(resolve);
+
+        function asdf(bar, dar) {
+            called = true;
+            bar.should.equal('foo');
+            dar.should.equal('yup');
+            should(this.foo).equal('foo');
+        }
+
+        called.should.not.be.ok;
+        caller(asdf, context);
+        called.should.be.ok;
+        done();
+    });
 });

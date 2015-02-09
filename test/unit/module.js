@@ -57,5 +57,16 @@ describe('Api', function() {
             spy.called.should.be.ok;
             done();
         });
+
+        it('should use the correct context', function(done) {
+            var resolve = sinon.spy(),
+                context = { foo: 'foo' },
+                spy = sinon.spy(function() { should(this.foo).equal('foo'); }),
+                result = api.decorate(spy, resolve, context);
+            spy.called.should.not.be.ok;
+            result();
+            spy.called.should.be.ok;
+            done();
+        });
     });
 });
