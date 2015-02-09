@@ -1,6 +1,6 @@
 {
   "name": "reflekt",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Angular style function call reflection hotness.",
   "main": "index.js",
   "author": "Ron Elliott <ron@elliott.im>",
