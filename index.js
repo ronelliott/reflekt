@@ -1,7 +1,11 @@
 'use strict';
 
-function isArray(ar) {
-    return Array.isArray(ar) || (typeof ar === 'object' && Object.prototype.toString.call(ar) === '[object Array]');
+function isArray(item) {
+    return Array.isArray(item) || (typeof item === 'object' && Object.prototype.toString.call(item) === '[object Array]');
+}
+
+function isObject(item) {
+    return typeof item === 'object';
 }
 
 var FN_ARGS        = /^function\s*[^\(]*\(\s*([^\)]*)\)/m,
@@ -36,7 +40,7 @@ function args(fn) {
 
 function injections(fn, resolver) {
     var params = isArray(fn) ? fn : args(fn),
-        resolve = (typeof resolver === 'object') ? ObjectResolver(resolver) : resolver;
+        resolve = isObject(resolver) ? ObjectResolver(resolver) : resolver;
     return params.map(resolve.bind(resolve));
 }
 
@@ -51,19 +55,18 @@ function decorate(fn, resolver, context) {
     }
 
     return function() {
-        fn.apply(context || fn, params);
+        return fn.apply(context || fn, params);
     };
 }
 
 function call(fn, resolver, context) {
     var func = decorate(fn, resolver, context);
-    func();
-    return func;
+    return func();
 }
 
 function caller(resolver) {
     return function caller(fn, context) {
-        call(fn, resolver, context);
+        return call(fn, resolver, context);
     };
 }
 

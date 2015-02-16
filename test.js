@@ -44,6 +44,40 @@ describe('reflekt', function() {
         done();
     });
 
+    it('call should return the result of the function', function(done) {
+        var called = false,
+            items = { bar: 'foo' };
+
+        function foo(bar) {
+            called = true;
+            return bar;
+        }
+
+        called = false;
+        called.should.not.be.ok;
+        reflekt.call(foo, items).should.equal(items.bar);
+        called.should.be.ok;
+
+        done();
+    });
+
+    it('call should return the result of the function', function(done) {
+        var called = false,
+            items = { bar: 'foo' },
+            caller = reflekt.caller(items);
+
+        function foo(bar) {
+            called = true;
+            return bar;
+        }
+
+        called = false;
+        called.should.not.be.ok;
+        caller(foo, items).should.equal(items.bar);
+        called.should.be.ok;
+
+        done();
+    });
 
     it('caller should work correctly', function(done) {
         var called = false,
