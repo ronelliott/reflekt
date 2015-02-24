@@ -54,7 +54,7 @@ function decorate(fn, resolver, context) {
         params = injections(fn, resolver);
     }
 
-    return function() {
+    return function decorated() {
         return fn.apply(context || fn, params);
     };
 }
