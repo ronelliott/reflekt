@@ -41,9 +41,19 @@ var FN_ARGS        = /^function\s*[^\(]*\(\s*([^\)]*)\)/m,
     STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 
 function ObjectResolver(items) {
-    return function resolve(name) {
+    function resolve(name) {
         return items[name];
+    }
+
+    resolve.add = function(name, value) {
+        items[name] = value;
     };
+
+    resolve.remove = function(name) {
+        delete items[name];
+    };
+
+    return resolve;
 }
 
 function args(fn) {
@@ -67,7 +77,7 @@ function args(fn) {
 
 function injections(fn, resolver) {
     var params = isArray(fn) ? fn : args(fn),
-        resolve = isObject(resolver) ? ObjectResolver(resolver) : resolver;
+        resolve = isObject(resolver) ? new ObjectResolver(resolver) : resolver;
     return params.map(resolve.bind(resolve));
 }
 
@@ -92,9 +102,15 @@ function call(fn, resolver, context) {
 }
 
 function caller(resolver) {
-    return function caller(fn, context) {
+    resolver = isObject(resolver) ? new ObjectResolver(resolver) : resolver;
+
+    function theCaller(fn, context) {
         return call(fn, resolver, context);
-    };
+    }
+
+    theCaller.resolver = resolver;
+
+    return theCaller;
 }
 
 module.exports = {
