@@ -53,6 +53,8 @@ function ObjectResolver(items) {
         delete items[name];
     };
 
+    resolve.items = items;
+
     return resolve;
 }
 
