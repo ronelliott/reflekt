@@ -78,29 +78,52 @@ function args(fn) {
 }
 
 function injections(fn, resolver) {
+    resolver = resolver || {};
     var params = isArray(fn) ? fn : args(fn),
         resolve = isObject(resolver) ? new ObjectResolver(resolver) : resolver;
     return params.map(resolve.bind(resolve));
 }
 
-function decorate(fn, resolver, context) {
-    var params = [];
+function params(fn, resolver) {
+    var theParams = [];
 
     if (isArray(fn)) {
-        params = injections(fn.slice(0, fn.length - 1), resolver);
-        fn = fn.slice(fn.length - 1)[0];
+        theParams = injections(fn.slice(0, fn.length - 1), resolver);
     } else {
-        params = injections(fn, resolver);
+        theParams = injections(fn, resolver);
+    }
+
+    return theParams;
+}
+
+function decorate(fn, resolver, context) {
+    fn = typeof(fn) === 'string' ? resolver(fn) : fn;
+    context = context || fn;
+
+    var theArgs = params(fn, resolver);
+
+    if (isArray(fn)) {
+        fn = fn.slice(fn.length - 1)[0];
     }
 
     return function decorated() {
-        return fn.apply(context || fn, params);
+        return fn.apply(context, theArgs) || context;
     };
 }
 
 function call(fn, resolver, context) {
-    var func = decorate(fn, resolver, context);
-    return func();
+    return decorate(fn, resolver, context)();
+}
+
+function construct(fn, resolver, context) {
+    fn = typeof(fn) === 'string' ? resolver(fn) : fn;
+
+    function ctor() {
+        return call(fn, resolver, context || this);
+    }
+
+    ctor.prototype = fn.prototype || {};
+    return new ctor();
 }
 
 function caller(resolver) {
@@ -118,8 +141,10 @@ function caller(resolver) {
 module.exports = {
     ObjectResolver: ObjectResolver,
     args:           args,
-    decorate:       decorate,
     call:           call,
     caller:         caller,
-    injections:     injections,
+    construct:      construct,
+    constructor:    constructor,
+    decorate:       decorate,
+    injections:     injections
 };
