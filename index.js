@@ -126,6 +126,12 @@ function construct(fn, resolver, context) {
     return new ctor();
 }
 
+function constructor(fn, resolver, context) {
+    return function constructor() {
+        return construct(fn, resolver, context);
+    };
+}
+
 function caller(resolver) {
     resolver = isObject(resolver) ? new ObjectResolver(resolver) : resolver;
 
