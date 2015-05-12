@@ -54,6 +54,7 @@ function ObjectResolver(items) {
     };
 
     resolve.items = items;
+    resolve.add('resolver', resolve);
 
     return resolve;
 }
@@ -133,14 +134,16 @@ function constructor(fn, resolver, context) {
 }
 
 function caller(resolver) {
-    resolver = isObject(resolver) ? new ObjectResolver(resolver) : resolver;
-
     function theCaller(fn, context) {
         return call(fn, resolver, context);
     }
 
-    theCaller.resolver = resolver;
+    if (isObject(resolver)) {
+        resolver = new ObjectResolver(resolver);
+        resolver.add('caller', theCaller);
+    }
 
+    theCaller.resolver = resolver;
     return theCaller;
 }
 

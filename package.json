@@ -2,7 +2,7 @@
   "name": "reflekt",
   "version": "0.1.12",
   "description": "Angular style function call reflection hotness.",
-  "main": "index.js",
+  "main": "reflekt.js",
   "author": "Ron Elliott <ron@elliott.im>",
   "license": "ISC",
   "repository": "https://github.com/ronelliott/reflekt",
@@ -13,9 +13,9 @@
     "reflection"
   ],
   "devDependencies": {
-    "mocha": "^2.1.0",
-    "should": "^4.6.5",
-    "sinon": "^1.12.2"
+    "mocha": "^2.2.4",
+    "should": "^6.0.1",
+    "sinon": "^1.14.1"
   },
   "dependencies": {}
 }
