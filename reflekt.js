@@ -27,113 +27,55 @@ if (!Function.prototype.bind) {
     };
 }
 
-function isArray(item) {
-    return Array.isArray(item) || (typeof item === 'object' && Object.prototype.toString.call(item) === '[object Array]');
-}
-
-function isObject(item) {
-    return typeof item === 'object';
-}
-
 var FN_ARGS        = /^function\s*[^\(]*\(\s*([^\)]*)\)/m,
     FN_ARG_SPLIT   = /,/,
     FN_ARG         = /^\s*(_?)(\S+?)\1\s*$/,
     STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 
 function ObjectResolver(items) {
+    var lifetimes = {};
+
     function resolve(name) {
+        if (name in lifetimes) {
+            lifetimes[name]--;
+
+            if (lifetimes[name] <= 0) {
+                delete items[name];
+                delete lifetimes[name];
+            }
+        }
+
         return items[name];
     }
 
-    resolve.add = function(name, value) {
+    function add(name, value, lifetime) {
         items[name] = value;
-    };
 
-    resolve.remove = function(name) {
+        if (lifetime) {
+            lifetimes[name] = lifetime;
+        }
+    }
+
+     function remove(name) {
         delete items[name];
-    };
+    }
 
     resolve.items = items;
+    resolve.lifetimes = lifetimes;
+    resolve.add = add;
+    resolve.remove = remove;
     resolve.add('resolver', resolve);
 
     return resolve;
-}
-
-function args(fn) {
-    var matches = fn
-        .toString()
-        .replace(STRIP_COMMENTS, '')
-        .match(FN_ARGS);
-
-    if (matches) {
-        return matches[1]
-            .split(FN_ARG_SPLIT)
-            .map(function(arg) {
-                return arg.replace(FN_ARG, function(all, underscore, name) {
-                    return name;
-                });
-            });
-    }
-
-    return [];
-}
-
-function injections(fn, resolver) {
-    resolver = resolver || {};
-    var params = isArray(fn) ? fn : args(fn),
-        resolve = isObject(resolver) ? new ObjectResolver(resolver) : resolver;
-    return params.map(resolve.bind(resolve));
-}
-
-function params(fn, resolver) {
-    var theParams = [];
-
-    if (isArray(fn)) {
-        theParams = injections(fn.slice(0, fn.length - 1), resolver);
-    } else {
-        theParams = injections(fn, resolver);
-    }
-
-    return theParams;
-}
-
-function decorate(fn, resolver, context) {
-    fn = typeof(fn) === 'string' ? resolver(fn) : fn;
-    context = context || fn;
-
-    var theArgs = params(fn, resolver);
-
-    if (isArray(fn)) {
-        fn = fn.slice(fn.length - 1)[0];
-    }
-
-    return function decorated() {
-        return fn.apply(context, theArgs) || context;
-    };
 }
 
 function call(fn, resolver, context) {
     return decorate(fn, resolver, context)();
 }
 
-function construct(fn, resolver, context) {
-    fn = typeof(fn) === 'string' ? resolver(fn) : fn;
-
-    function ctor() {
-        return call(fn, resolver, context || this);
-    }
-
-    ctor.prototype = fn.prototype || {};
-    return new ctor();
-}
-
-function constructor(fn, resolver, context) {
-    return function constructor() {
-        return construct(fn, resolver, context);
-    };
-}
-
 function caller(resolver) {
+    resolver = resolver || {};
+
     function theCaller(fn, context) {
         return call(fn, resolver, context);
     }
@@ -147,13 +89,125 @@ function caller(resolver) {
     return theCaller;
 }
 
+function construct(fn, resolver, context) {
+    resolver = verifyResolver(resolver);
+    fn = resolveFunction(fn, resolver);
+
+    function Constructor() {
+        return call(fn, resolver, context || this);
+    }
+
+    Constructor.prototype = (fn && fn.prototype) || {};
+    return new Constructor();
+}
+
+function constructor(fn) {
+    return function constructor(resolver, context) {
+        return construct(fn, resolver, context);
+    };
+}
+
+function decorate(fn, resolver, context) {
+    resolver = verifyResolver(resolver);
+    fn = resolveFunction(fn, resolver);
+    context = context || fn;
+
+    var theParams = params(fn, resolver);
+
+    if (isArray(fn)) {
+        fn = fn.slice(fn.length - 1)[0];
+    }
+
+    return function decorated() {
+        return fn.apply(context, theParams) || context;
+    };
+}
+
+function injections(fn, resolver) {
+    resolver = verifyResolver(resolver);
+    fn = resolveFunction(fn, resolver);
+    var params = isArray(fn) ? fn : parse(fn);
+    return params.map(resolver);
+}
+
+function isKind(item, kind) {
+    return Object.prototype.toString.call(item) === kind;
+}
+
+function isArray(item) {
+    return (Array.isArray && Array.isArray(item)) || isKind(item, '[object Array]');
+}
+
+function isObject(item) {
+    return isKind(item, '[object Object]');
+}
+
+function isString(item) {
+    return isKind(item, '[object String]');
+}
+
+function params(fn, resolver) {
+    resolver = verifyResolver(resolver);
+    fn = resolveFunction(fn, resolver);
+
+    var theParams = [];
+
+    if (isArray(fn)) {
+        theParams = injections(fn.slice(0, fn.length - 1), resolver);
+    } else {
+        theParams = injections(fn, resolver);
+    }
+
+    return theParams;
+}
+
+function parse(fn) {
+    if (!fn) {
+        throw new Error('Function is not defined!');
+    }
+
+    var matches = fn
+        .toString()
+        .replace(STRIP_COMMENTS, '')
+        .match(FN_ARGS);
+
+    if (matches) {
+        return matches[1]
+            .split(FN_ARG_SPLIT)
+            .filter(function(arg) {
+                return arg.length > 0;
+            })
+            .map(function(arg) {
+                return arg.replace(FN_ARG, function(all, underscore, name) {
+                    return name;
+                });
+            });
+    }
+
+    return [];
+}
+
+function resolveFunction(fn, resolver) {
+    return isString(fn) ? resolver(fn) : fn;
+}
+
+function verifyResolver(resolver) {
+    resolver = resolver || {};
+    return isObject(resolver) ? new ObjectResolver(resolver || {}) : resolver;
+}
+
 module.exports = {
     ObjectResolver: ObjectResolver,
-    args:           args,
     call:           call,
     caller:         caller,
     construct:      construct,
     constructor:    constructor,
     decorate:       decorate,
-    injections:     injections
+    injections:     injections,
+    isKind:         isKind,
+    isArray:        isArray,
+    isObject:       isObject,
+    isString:       isString,
+    params:         params,
+    parse:          parse
 };

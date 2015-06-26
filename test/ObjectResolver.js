@@ -15,4 +15,24 @@ describe('ObjectResolver', function() {
     it('should not resolve items not found', function() {
         should(this.resolver('bar')).not.be.ok;
     });
+
+    it('should store lifetimes values when adding an item', function() {
+        this.resolver.add('foo', 'foo', 1);
+        this.resolver.lifetimes.foo.should.equal(1);
+    });
+
+    it('should reduce lifetime values when resolving an item', function() {
+        this.resolver.add('foo', 'foo', 2);
+        this.resolver.lifetimes.foo.should.equal(2);
+        this.resolver('foo');
+        this.resolver.lifetimes.foo.should.equal(1);
+    });
+
+    it('should remove lifetime values and items when resolving an item and its lifetime has reached 0', function() {
+        this.resolver.add('foo', 'foo', 1);
+        this.resolver.lifetimes.foo.should.equal(1);
+        this.resolver('foo');
+        should(this.resolver.lifetimes.foo).not.be.ok;
+        should(this.resolver.items.foo).not.be.ok;
+    });
 });
