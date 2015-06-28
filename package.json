@@ -18,14 +18,13 @@
   "devDependencies": {
     "browserify": "^10.2.4",
     "coveralls": "^2.11.2",
-    "istanbul": "^0.3.16",
+    "istanbul": "^0.3.17",
     "jsdoc-to-markdown": "^1.1.1",
-    "mocha": "^2.2.4",
+    "mocha": "^2.2.5",
     "mocha-lcov-reporter": "0.0.2",
     "phantomjs": "^1.9.17",
-    "should": "^6.0.1",
-    "sinon": "^1.14.1",
+    "should": "^7.0.1",
+    "sinon": "^1.15.1",
     "testem": "^0.8.4"
-  },
-  "dependencies": {}
+  }
 }
