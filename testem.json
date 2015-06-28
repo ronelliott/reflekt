@@ -1,0 +1,34 @@
+{
+  "port": 7333,
+  "framework": "mocha",
+  "before_tests": "browserify test/*.js -o test.built.js",
+  "on_exit": "rm test.built.js",
+  "serve_files": [ "test.built.js" ],
+  "src_files": [
+    "reflekt.js",
+    "test/**/*.js"
+  ],
+  "launchers": {
+    "istanbul": {
+      "command": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R tap",
+      "protocol": "tap"
+    },
+    "node": {
+      "command": "mocha -R tap",
+      "protocol": "tap"
+    }
+  },
+  "launch_in_dev": [
+    "node",
+    "Chrome",
+    "Firefox",
+    "Opera",
+    "Safari",
+    "PhantomJS"
+  ],
+  "launch_in_ci": [
+    "istanbul",
+    "Firefox",
+    "PhantomJS"
+  ]
+}

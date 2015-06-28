@@ -7,20 +7,25 @@
   "license": "ISC",
   "repository": "https://github.com/ronelliott/reflekt",
   "scripts": {
-    "test": "mocha",
-    "test:coverage": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec",
-    "coverage:upload": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "coverage:upload": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "gen:docs": "jsdoc2md --template README.md.in reflekt.js > README.md",
+    "test": "testem",
+    "test:ci": "testem ci"
   },
   "keywords": [
     "reflection"
   ],
   "devDependencies": {
+    "browserify": "^10.2.4",
     "coveralls": "^2.11.2",
     "istanbul": "^0.3.16",
+    "jsdoc-to-markdown": "^1.1.1",
     "mocha": "^2.2.4",
     "mocha-lcov-reporter": "0.0.2",
+    "phantomjs": "^1.9.17",
     "should": "^6.0.1",
-    "sinon": "^1.14.1"
+    "sinon": "^1.14.1",
+    "testem": "^0.8.4"
   },
   "dependencies": {}
 }
