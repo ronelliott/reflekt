@@ -28,7 +28,6 @@
   ],
   "launch_in_ci": [
     "istanbul",
-    "Firefox",
     "PhantomJS"
   ]
 }
