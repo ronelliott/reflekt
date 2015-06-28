@@ -47,7 +47,18 @@ function MyClass(foo, bar) {
 
 MyClass.prototype = {
     something: function(name) {
-        console.log('name', name || 'ducks');
+        console.log('name', name || 'stan');
+    }
+};
+
+function MyOtherClass(foo, bar) {
+    console.log('foo', foo);
+    console.log('bar', bar);
+}
+
+MyOtherClass.prototype = {
+    something: function(name) {
+        console.log('name', name || 'smith');
     }
 };
 ```
@@ -123,6 +134,8 @@ code:
 
 ```js
 var myInstance = reflekt.construct(MyClass, { foo: 'duck', bar: 'sauce' });
+console.log(myInstance instanceof MyClass);
+myInstance.something();
 ```
 
 output:
@@ -130,6 +143,8 @@ output:
 ```bash
 foo duck
 bar sauce
+true
+name stan
 ```
 
 ### Constructing an Object Using the Resolver
@@ -147,33 +162,14 @@ foo duck
 bar sauce
 ```
 
-### Constructing the Same Object Multiple Times with Different Resolvers
+### Constructing the Multiple Objects with the Same Resolver
 
 code:
 
 ```js
-var myConstructor = reflekt.constructor(MyClass);
-var myInstance = myConstructor({ foo: 'duck', bar: 'sauce' });
-var myOtherInstance = myConstructor({ foo: 'is', bar: 'yum' });
-```
-
-output:
-
-```bash
-foo ducks
-bar sauce
-foo is
-bar yum
-```
-
-### Constructing the Same Object Multiple Times with Different Resolvers using the Resolver
-
-code:
-
-```js
-var myConstructor = reflekt.constructor('MyClass');
-var myInstance = myConstructor({ MyClass: MyClass, foo: 'duck', bar: 'sauce' });
-var myOtherInstance = myConstructor({ MyClass: MyClass, foo: 'is', bar: 'yum' });
+var myConstructor = reflekt.constructor({ foo: 'duck', bar: 'sauce' });
+var myInstance = myConstructor(MyClass);
+var myOtherInstance = myConstructor(MyOtherClass);
 ```
 
 output:
@@ -181,8 +177,27 @@ output:
 ```bash
 foo duck
 bar sauce
-foo is
-bar yum
+foo duck
+bar sauce
+```
+
+### Constructing the Same Object Multiple Times Using the Resolver
+
+code:
+
+```js
+var myConstructor = reflekt.constructor({ MyClass: MyClass, foo: 'duck', bar: 'sauce' }');
+var myInstance = myConstructor('MyClass');
+var myOtherInstance = myConstructor('MyClass');
+```
+
+output:
+
+```bash
+foo duck
+bar sauce
+foo duck
+bar sauce
 ```
 
 
