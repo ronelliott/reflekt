@@ -1,0 +1,192 @@
+# reflekt
+[![view on npm](http://img.shields.io/npm/v/reflekt.svg)](https://www.npmjs.org/package/reflekt)
+[![view on npm](https://img.shields.io/npm/dm/reflekt.svg)](https://www.npmjs.org/package/reflekt)
+[![Dependency Status](https://david-dm.org/ronelliott/reflekt.svg)](https://david-dm.org/ronelliott/reflekt)
+[![Build Status](https://travis-ci.org/ronelliott/reflekt.png)](https://travis-ci.org/ronelliott/reflekt)
+[![Coverage Status](https://coveralls.io/repos/ronelliott/reflekt/badge.svg?branch=master)](https://coveralls.io/r/ronelliott/reflekt?branch=master)
+[![Code Climate](https://codeclimate.com/github/ronelliott/reflekt/badges/gpa.svg)](https://codeclimate.com/github/ronelliott/reflekt)
+
+
+## Overview
+
+reflekt can call functions and construct new object, injecting any arguments required. This is achieved by converting
+the function to a string and using regex to parse out the arguments. Each argument is then resolved using a defined
+resolver, which can either be an object containing key/value pairs of names and values to pass, or a function which
+takes the name of the argument as a parameter and returns the argument to pass.
+
+
+## Installation
+Install using [NPM](https://github.com/isaacs/npm):
+
+    npm install reflekt --save
+
+
+## Examples / Quickstart
+
+This covers the basic usage of reflekt, for more detailed information consult the API section below.
+
+NOTE: for brevity's sake, all examples should be assumed to begin with: 
+
+```js
+var reflekt = require('reflekt');
+
+function myFunc(foo, bar) {
+    console.log('foo', foo);
+    console.log('bar', bar);
+}
+
+function myOtherFunc(foo, bar) {
+    console.log('foo', foo);
+    console.log('bar', bar);
+}
+
+function MyClass(foo, bar) {
+    console.log('foo', foo);
+    console.log('bar', bar);
+}
+
+MyClass.prototype = {
+    something: function(name) {
+        console.log('name', name || 'ducks');
+    }
+};
+```
+
+
+### Calling a Function
+
+code:
+
+```js
+reflekt.call(myFunc, { foo: 'duck', bar: 'sauce' });
+```
+
+output:
+
+```bash
+foo duck
+bar sauce
+```
+
+### Calling a Function Using the Resolver
+
+code:
+
+```js
+reflekt.call('myFunc', { myFunc: myFunc, foo: 'duck', bar: 'sauce' });
+```
+
+output:
+
+```bash
+foo duck
+bar sauce
+```
+
+#### Calling a Function and Overriding Argument Names
+
+code:
+
+```js
+reflekt.call([ 'bar', 'bar', myFunc ], { bar: 'ducks' });
+```
+
+output:
+
+```bash
+foo ducks
+bar ducks
+```
+
+### Calling Multiple Functions Using the Same Resolver
+
+code:
+
+```js
+var myCaller = reflekt.caller({ foo: 'duck', bar: 'sauce' });
+myCaller(myFunc);
+myCaller(myOtherFunc);
+```
+
+output:
+
+```bash
+foo duck
+bar sauce
+foo duck
+bar sauce
+```
+
+### Constructing an Object
+
+code:
+
+```js
+var myInstance = reflekt.construct(MyClass, { foo: 'duck', bar: 'sauce' });
+```
+
+output:
+
+```bash
+foo duck
+bar sauce
+```
+
+### Constructing an Object Using the Resolver
+
+code:
+
+```js
+var myInstance = reflekt.construct('MyClass', { MyClass: MyClass, foo: 'duck', bar: 'sauce' });
+```
+
+output:
+
+```bash
+foo duck
+bar sauce
+```
+
+### Constructing the Same Object Multiple Times with Different Resolvers
+
+code:
+
+```js
+var myConstructor = reflekt.constructor(MyClass);
+var myInstance = myConstructor({ foo: 'duck', bar: 'sauce' });
+var myOtherInstance = myConstructor({ foo: 'is', bar: 'yum' });
+```
+
+output:
+
+```bash
+foo ducks
+bar sauce
+foo is
+bar yum
+```
+
+### Constructing the Same Object Multiple Times with Different Resolvers using the Resolver
+
+code:
+
+```js
+var myConstructor = reflekt.constructor('MyClass');
+var myInstance = myConstructor({ MyClass: MyClass, foo: 'duck', bar: 'sauce' });
+var myOtherInstance = myConstructor({ MyClass: MyClass, foo: 'is', bar: 'yum' });
+```
+
+output:
+
+```bash
+foo duck
+bar sauce
+foo is
+bar yum
+```
+
+
+# API Reference
+{{#module name="reflekt"}}
+{{>docs}}
+{{/module}}

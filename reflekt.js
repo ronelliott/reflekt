@@ -1,7 +1,8 @@
 'use strict';
 
 // some older JS engines (like PhantomJS 1.9.X and below) do not include the `bind` Function method
-// this polyfill was taken from: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind#Polyfill
+// this polyfill was taken from:
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind#Polyfill
 if (!Function.prototype.bind) {
     Function.prototype.bind = function(oThis) {
         if (typeof this !== 'function') {
@@ -11,14 +12,14 @@ if (!Function.prototype.bind) {
         }
 
         var aArgs   = Array.prototype.slice.call(arguments, 1),
-                fToBind = this,
-                fNOP    = function() {},
-                fBound  = function() {
-                    return fToBind.apply(this instanceof fNOP
-                                 ? this
-                                 : oThis,
-                                 aArgs.concat(Array.prototype.slice.call(arguments)));
-                };
+            fToBind = this,
+            fNOP    = function() {},
+            fBound  = function() {
+                return fToBind.apply(this instanceof fNOP
+                        ? this
+                        : oThis,
+                    aArgs.concat(Array.prototype.slice.call(arguments)));
+            };
 
         fNOP.prototype = this.prototype;
         fBound.prototype = new fNOP();
@@ -27,14 +28,31 @@ if (!Function.prototype.bind) {
     };
 }
 
+/**
+ @module reflekt
+ */
+
 var FN_ARGS        = /^function\s*[^\(]*\(\s*([^\)]*)\)/m,
     FN_ARG_SPLIT   = /,/,
     FN_ARG         = /^\s*(_?)(\S+?)\1\s*$/,
     STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 
+/**
+ creates a new ObjectResolver
+ @static
+ @params {Object} [items] - the items to initially store when creating the ObjectResolver
+ @returns {Function} the created ObjectResolver. see {@link ObjectResolver~resolve}.
+ */
 function ObjectResolver(items) {
     var lifetimes = {};
 
+    /**
+     attempts to resolve an item with the given name.
+
+     NOTE: the ObjectResolver is callable directly, which is an alias to this function.
+     @param {String} name - the name of the item to add
+     @returns {Object|undefined} the resolved item, or undefined if it was not found
+     */
     function resolve(name) {
         if (name in lifetimes) {
             lifetimes[name]--;
@@ -48,6 +66,12 @@ function ObjectResolver(items) {
         return items[name];
     }
 
+    /**
+     adds an item using the given name, value and lifetime
+     @param {String} name - the name of the item to add
+     @param {Object} value - the value of the item to store
+     @param {Integer} [lifetime] - how many times the item can be resolved before being removed automatically
+     */
     function add(name, value, lifetime) {
         items[name] = value;
 
@@ -56,7 +80,11 @@ function ObjectResolver(items) {
         }
     }
 
-     function remove(name) {
+    /**
+     removes an item with the given name from the ObjectResolver
+     @param {String} name - the name of the item to remove
+     */
+    function remove(name) {
         delete items[name];
     }
 
@@ -64,15 +92,36 @@ function ObjectResolver(items) {
     resolve.lifetimes = lifetimes;
     resolve.add = add;
     resolve.remove = remove;
+    resolve.resolve = resolve;
     resolve.add('resolver', resolve);
 
     return resolve;
 }
 
+/**
+ calls the function using the given resolver and context
+ @static
+ @param {Function|String|Array} fn - the function to call
+ @param {Function|Object} [resolver] - the resolver to use to resolve the function's arguments
+ @param {Object} [context] - the context to call the function in
+ @returns {Object} the result of the function call
+ */
 function call(fn, resolver, context) {
-    return decorate(fn, resolver, context)();
+    resolver = verifyResolver(resolver);
+    fn = resolveFunction(fn, resolver);
+    context = context || fn;
+    var params = injections(fn, resolver);
+    fn = isArray(fn) ? fn[fn.length - 1] : fn;
+    return fn.apply(context, params) || context;
 }
 
+/**
+ creates a function that takes a function/string and a context, calling the function in the given context using the
+ given resolver
+ @static
+ @param {Function|Object} [resolver] - the resolver to use to resolve the function's arguments
+ @returns {Function} the function that calls other functions
+ */
 function caller(resolver) {
     resolver = resolver || {};
 
@@ -89,78 +138,122 @@ function caller(resolver) {
     return theCaller;
 }
 
-function construct(fn, resolver, context) {
+/**
+ constructs a new copy of the given klass using the given resolver and context
+ @static
+ @param {Function|String} klass - the object to construct a new copy of
+ @param {Function|Object} [resolver] - the resolver to use to resolve the class constructor's arguments
+ @param {Object} [context] - the context to call the class constructor in
+ @returns {Object} the result of the call to the class constructor
+ */
+function construct(klass, resolver, context) {
     resolver = verifyResolver(resolver);
-    fn = resolveFunction(fn, resolver);
+    klass = resolveFunction(klass, resolver);
 
     function Constructor() {
-        return call(fn, resolver, context || this);
+        return call(klass, resolver, context || this);
     }
 
-    Constructor.prototype = (fn && fn.prototype) || {};
+    Constructor.prototype = (klass && klass.prototype) || {};
     return new Constructor();
 }
 
-function constructor(fn) {
-    return function constructor(resolver, context) {
-        return construct(fn, resolver, context);
+/**
+ creates a function that takes a class and context, creating a new copy of the class in the given context using the
+ given resolver
+ @static
+ @param {Function|Object} [resolver] - the resolver to use to resolve the class constructor's arguments
+ @returns {Function} the function that constructs other objects
+ */
+function constructor(resolver) {
+    return function constructor(klass, context) {
+        return construct(klass, resolver, context);
     };
 }
 
+/**
+ creates a function that calls the given function using the given resolver in the given context
+ @static
+ @param {Function|String} fn - the function to resolve the arguments for
+ @param {Function|Object} [resolver] - the resolver to use to resolve the function's arguments
+ @param {Object} [context] - the context to call the function in
+ @returns {Object} a function that takes no arguments and returns the result of calling the given function
+ */
 function decorate(fn, resolver, context) {
-    resolver = verifyResolver(resolver);
-    fn = resolveFunction(fn, resolver);
-    context = context || fn;
-
-    var theParams = params(fn, resolver);
-
-    if (isArray(fn)) {
-        fn = fn.slice(fn.length - 1)[0];
-    }
-
     return function decorated() {
-        return fn.apply(context, theParams) || context;
+        return call(fn, resolver, context);
     };
 }
 
+/**
+ resolves the function's arguments using the given resolver
+ @static
+ @param {Function|String|Array} fn - the function to resolve the arguments for
+ @param {Function|Object} [resolver] - the resolver to use to resolve the function's arguments
+ @returns {Array} the functions resolved arguments, in order of appearance in the function's signature
+ */
 function injections(fn, resolver) {
     resolver = verifyResolver(resolver);
     fn = resolveFunction(fn, resolver);
-    var params = isArray(fn) ? fn : parse(fn);
+    var params;
+
+    if (isArray(fn)) {
+        params = fn.slice(0, fn.length - 1);
+    } else {
+        params = parse(fn);
+    }
+
     return params.map(resolver);
 }
 
+/**
+ checks if the given item is of the given type by calling `Object.toString` on the item and doing an comparison between
+ the result and the given kind
+ @static
+ @param {Object} item - the item to check the type of
+ @param {String} kind - the type expected, in the form of '[object Object]'
+ @returns {Boolean} true if the item is of the same type, false otherwise
+ */
 function isKind(item, kind) {
     return Object.prototype.toString.call(item) === kind;
 }
 
+/**
+ checks if the given item is an array
+ @static
+ @param {Object} item - the item to check the type of
+ @returns {Boolean} true if the item is an array, false otherwise
+ */
 function isArray(item) {
     return (Array.isArray && Array.isArray(item)) || isKind(item, '[object Array]');
 }
 
+/**
+ checks if the given item is an object
+ @static
+ @param {Object} item - the item to check the type of
+ @returns {Boolean} true if the item is an object, false otherwise
+ */
 function isObject(item) {
     return isKind(item, '[object Object]');
 }
 
+/**
+ checks if the given item is a string
+ @static
+ @param {Object} item - the item to check the type of
+ @returns {Boolean} true if the item is a string, false otherwise
+ */
 function isString(item) {
     return isKind(item, '[object String]');
 }
 
-function params(fn, resolver) {
-    resolver = verifyResolver(resolver);
-    fn = resolveFunction(fn, resolver);
-
-    var theParams = [];
-
-    if (isArray(fn)) {
-        theParams = injections(fn.slice(0, fn.length - 1), resolver);
-    } else {
-        theParams = injections(fn, resolver);
-    }
-
-    return theParams;
-}
-
+/**
+ parses the function's arguments, returning an array of the arguments found
+ @static
+ @param {Function|String} fn - the function to parse the arguments for
+ @returns {Array} the functions arguments, in order of appearance in the function's signature
+ */
 function parse(fn) {
     if (!fn) {
         throw new Error('Function is not defined!');
@@ -208,6 +301,5 @@ module.exports = {
     isArray:        isArray,
     isObject:       isObject,
     isString:       isString,
-    params:         params,
     parse:          parse
 };

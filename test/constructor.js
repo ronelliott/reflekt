@@ -5,45 +5,45 @@ var should = require('should'),
 
 describe('constructor', function() {
     it('should return a function that constructs new instances when called', function() {
-        var theConstructor = constructor(Foo);
+        var theConstructor = constructor();
 
         function Foo() {
             this.foo = true;
         }
 
-        var foo = theConstructor();
+        var foo = theConstructor(Foo);
         should(foo).be.ok;
         foo.foo.should.equal(true);
     });
 
     it('should return an object that pass `instanceof` checks', function() {
-        var theConstructor = constructor(Foo);
+        var theConstructor = constructor({ bar: 'bar' });
 
         function Foo() {}
 
         Foo.prototype = { foo: true };
 
-        var foo = theConstructor({ bar: 'bar' });
+        var foo = theConstructor(Foo);
         should(foo).be.ok;
         foo.foo.should.equal(true);
         should(foo instanceof Foo).equal(true);
     });
 
     it('should allow an object to be passed for resolutions', function() {
-        var theConstructor = constructor(Foo);
+        var theConstructor = constructor({ bar: 'bar' });
 
         function Foo(bar) {
             bar.should.equal('bar');
             this.foo = true;
         }
 
-        var foo = theConstructor({ bar: 'bar' });
+        var foo = theConstructor(Foo);
         should(foo).be.ok;
         foo.foo.should.equal(true);
     });
 
     it('should allow a function to be passed for resolutions', function() {
-        var theConstructor = constructor(Foo),
+        var theConstructor = constructor(resolver),
             called = false;
 
         function Foo(bar) {
@@ -56,33 +56,33 @@ describe('constructor', function() {
             return name;
         }
 
-        var foo = theConstructor(resolver);
+        var foo = theConstructor(Foo);
         called.should.equal(true);
         should(foo).be.ok;
         foo.foo.should.equal(true);
     });
 
     it('should allow an array to be passed with resolution names and the function to be called', function() {
-        var theConstructor = constructor(['dar', Foo]);
+        var theConstructor = constructor({ bar: 'bar', dar: 'dar' });
 
         function Foo(bar) {
             bar.should.equal('dar');
             this.foo = true;
         }
 
-        var foo = theConstructor({ bar: 'bar', dar: 'dar' });
+        var foo = theConstructor(['dar', Foo]);
         should(foo).be.ok;
         foo.foo.should.equal(true);
     });
 
     it('should allow a string to be passed in place of a function', function() {
-        var theConstructor = constructor('Foo');
+        var theConstructor = constructor({ Foo: Foo });
 
         function Foo() {
             this.foo = true;
         }
 
-        var foo = theConstructor({ Foo: Foo });
+        var foo = theConstructor('Foo');
         should(foo).be.ok;
         foo.foo.should.equal(true);
     });
