@@ -22,7 +22,6 @@
     "node",
     "Chrome",
     "Firefox",
-    "Opera",
     "Safari",
     "PhantomJS"
   ],
