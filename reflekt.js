@@ -270,20 +270,16 @@ function parse(fn) {
         .replace(STRIP_COMMENTS, '')
         .match(FN_ARGS);
 
-    if (matches) {
-        return matches[1]
-            .split(FN_ARG_SPLIT)
-            .filter(function(arg) {
-                return arg.length > 0;
-            })
-            .map(function(arg) {
-                return arg.replace(FN_ARG, function(all, underscore, name) {
-                    return name;
-                });
+    return matches[1]
+        .split(FN_ARG_SPLIT)
+        .filter(function(arg) {
+            return arg.length > 0;
+        })
+        .map(function(arg) {
+            return arg.replace(FN_ARG, function(all, underscore, name) {
+                return name;
             });
-    }
-
-    return [];
+        });
 }
 
 function resolveFunction(fn, resolver) {
