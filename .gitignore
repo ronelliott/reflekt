@@ -35,3 +35,6 @@ npm-debug.log
 
 # intellij based editors
 .idea
+
+# testem built tests
+test.built.js
