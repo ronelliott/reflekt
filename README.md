@@ -162,7 +162,7 @@ foo duck
 bar sauce
 ```
 
-### Constructing the Multiple Objects with the Same Resolver
+### Constructing Multiple Objects with the Same Resolver
 
 code:
 
@@ -186,7 +186,7 @@ bar sauce
 code:
 
 ```js
-var myConstructor = reflekt.constructor({ MyClass: MyClass, foo: 'duck', bar: 'sauce' }');
+var myConstructor = reflekt.constructor({ MyClass: MyClass, foo: 'duck', bar: 'sauce' });
 var myInstance = myConstructor('MyClass');
 var myOtherInstance = myConstructor('MyClass');
 ```
@@ -206,21 +206,24 @@ bar sauce
 ## reflekt
 
 * [reflekt](#module_reflekt)
-  * [.ObjectResolver()](#module_reflekt.ObjectResolver) ⇒ <code>function</code>
-    * [~resolve(name)](#module_reflekt.ObjectResolver..resolve) ⇒ <code>Object</code> &#124; <code>undefined</code>
-    * [~add(name, value, [lifetime])](#module_reflekt.ObjectResolver..add)
-    * [~remove(name)](#module_reflekt.ObjectResolver..remove)
-  * [.call(fn, [resolver], [context])](#module_reflekt.call) ⇒ <code>Object</code>
-  * [.caller([resolver])](#module_reflekt.caller) ⇒ <code>function</code>
-  * [.construct(klass, [resolver], [context])](#module_reflekt.construct) ⇒ <code>Object</code>
-  * [.constructor([resolver])](#module_reflekt.constructor) ⇒ <code>function</code>
-  * [.decorate(fn, [resolver], [context])](#module_reflekt.decorate) ⇒ <code>Object</code>
-  * [.injections(fn, [resolver])](#module_reflekt.injections) ⇒ <code>Array</code>
-  * [.isKind(item, kind)](#module_reflekt.isKind) ⇒ <code>Boolean</code>
-  * [.isArray(item)](#module_reflekt.isArray) ⇒ <code>Boolean</code>
-  * [.isObject(item)](#module_reflekt.isObject) ⇒ <code>Boolean</code>
-  * [.isString(item)](#module_reflekt.isString) ⇒ <code>Boolean</code>
-  * [.parse(fn)](#module_reflekt.parse) ⇒ <code>Array</code>
+  * _static_
+    * [.ObjectResolver()](#module_reflekt.ObjectResolver) ⇒ <code>function</code>
+      * [~resolve(name)](#module_reflekt.ObjectResolver..resolve) ⇒ <code>Object</code> &#124; <code>undefined</code>
+      * [~add(name, value, [lifetime])](#module_reflekt.ObjectResolver..add)
+      * [~remove(name)](#module_reflekt.ObjectResolver..remove)
+    * [.call(fn, [resolver], [context])](#module_reflekt.call) ⇒ <code>Object</code>
+    * [.caller([resolver])](#module_reflekt.caller) ⇒ <code>function</code>
+    * [.construct(klass, [resolver], [context])](#module_reflekt.construct) ⇒ <code>Object</code>
+    * [.constructor([resolver])](#module_reflekt.constructor) ⇒ <code>function</code>
+    * [.decorate(fn, [resolver], [context])](#module_reflekt.decorate) ⇒ <code>Object</code>
+    * [.injections(fn, [resolver])](#module_reflekt.injections) ⇒ <code>Array</code>
+    * [.isKind(item, kind)](#module_reflekt.isKind) ⇒ <code>Boolean</code>
+    * [.isArray(item)](#module_reflekt.isArray) ⇒ <code>Boolean</code>
+    * [.isObject(item)](#module_reflekt.isObject) ⇒ <code>Boolean</code>
+    * [.isString(item)](#module_reflekt.isString) ⇒ <code>Boolean</code>
+    * [.parse(fn)](#module_reflekt.parse) ⇒ <code>Array</code>
+  * _inner_
+    * [~has(fn, args)](#module_reflekt..has) ⇒ <code>Boolean</code>
 
 <a name="module_reflekt.ObjectResolver"></a>
 ### reflekt.ObjectResolver() ⇒ <code>function</code>
@@ -230,10 +233,10 @@ creates a new ObjectResolver
 **Returns**: <code>function</code> - the created ObjectResolver. see [ObjectResolver~resolve](ObjectResolver~resolve).  
 **Params**: <code>Object</code> [items] - the items to initially store when creating the ObjectResolver  
 
-* [.ObjectResolver()](#module_reflekt.ObjectResolver) ⇒ <code>function</code>
-  * [~resolve(name)](#module_reflekt.ObjectResolver..resolve) ⇒ <code>Object</code> &#124; <code>undefined</code>
-  * [~add(name, value, [lifetime])](#module_reflekt.ObjectResolver..add)
-  * [~remove(name)](#module_reflekt.ObjectResolver..remove)
+  * [.ObjectResolver()](#module_reflekt.ObjectResolver) ⇒ <code>function</code>
+    * [~resolve(name)](#module_reflekt.ObjectResolver..resolve) ⇒ <code>Object</code> &#124; <code>undefined</code>
+    * [~add(name, value, [lifetime])](#module_reflekt.ObjectResolver..add)
+    * [~remove(name)](#module_reflekt.ObjectResolver..remove)
 
 <a name="module_reflekt.ObjectResolver..resolve"></a>
 #### ObjectResolver~resolve(name) ⇒ <code>Object</code> &#124; <code>undefined</code>
@@ -401,4 +404,16 @@ parses the function's arguments, returning an array of the arguments found
 | Param | Type | Description |
 | --- | --- | --- |
 | fn | <code>function</code> &#124; <code>String</code> | the function to parse the arguments for |
+
+<a name="module_reflekt..has"></a>
+### reflekt~has(fn, args) ⇒ <code>Boolean</code>
+checks if the given function has the given argument(s)
+
+**Kind**: inner method of <code>[reflekt](#module_reflekt)</code>  
+**Returns**: <code>Boolean</code> - true if the argument(s) are found in the function signature, false otherwise  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| fn | <code>function</code> | the function to check |
+| args | <code>String</code> &#124; <code>Array</code> | the args to check |
 

@@ -162,7 +162,7 @@ foo duck
 bar sauce
 ```
 
-### Constructing the Multiple Objects with the Same Resolver
+### Constructing Multiple Objects with the Same Resolver
 
 code:
 
@@ -186,7 +186,7 @@ bar sauce
 code:
 
 ```js
-var myConstructor = reflekt.constructor({ MyClass: MyClass, foo: 'duck', bar: 'sauce' }');
+var myConstructor = reflekt.constructor({ MyClass: MyClass, foo: 'duck', bar: 'sauce' });
 var myInstance = myConstructor('MyClass');
 var myOtherInstance = myConstructor('MyClass');
 ```
