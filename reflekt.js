@@ -158,6 +158,20 @@ function decorate(fn, resolver, context) {
 }
 
 /**
+ calls the callback on each item in the array
+ @returns {Boolean} true if all calls return true, or false otherwise
+ */
+function every(items, callback) {
+    for (var i = 0; i < items.length; i++) {
+        if (!callback(items[i])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
  checks if the given function has the given argument(s)
  @param {Function} fn - the function to check
  @param {String|Array} args - the args to check
@@ -167,7 +181,7 @@ function has(fn, args) {
     var parsed = parse(fn);
 
     if (isArray(args)) {
-        return args.every(check);
+        return every(args, check);
     } else {
         return check(args);
     }
@@ -288,6 +302,7 @@ module.exports = {
     construct:      construct,
     constructor:    constructor,
     decorate:       decorate,
+    every:          every,
     has:            has,
     injections:     injections,
     isKind:         isKind,
@@ -296,96 +311,3 @@ module.exports = {
     isString:       isString,
     parse:          parse
 };
-
-// some older JS engines (like PhantomJS 1.9.X and below) do not include the `bind` Function method
-// this polyfill was taken from:
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind#Polyfill
-if (!Function.prototype.bind) {
-    Function.prototype.bind = function(oThis) {
-        if (typeof this !== 'function') {
-            // closest thing possible to the ECMAScript 5
-            // internal IsCallable function
-            throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
-        }
-
-        var aArgs   = Array.prototype.slice.call(arguments, 1),
-            fToBind = this,
-            fNOP    = function() {},
-            fBound  = function() {
-                return fToBind.apply(this instanceof fNOP
-                        ? this
-                        : oThis,
-                    aArgs.concat(Array.prototype.slice.call(arguments)));
-            };
-
-        fNOP.prototype = this.prototype;
-        fBound.prototype = new fNOP();
-
-        return fBound;
-    };
-}
-
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every#Polyfill
-if (!Array.prototype.every) {
-    Array.prototype.every = function(callbackfn, thisArg) {
-        'use strict';
-        var T, k;
-
-        if (this == null) {
-            throw new TypeError('this is null or not defined');
-        }
-
-        // 1. Let O be the result of calling ToObject passing the this
-        //    value as the argument.
-        var O = Object(this);
-
-        // 2. Let lenValue be the result of calling the Get internal method
-        //    of O with the argument "length".
-        // 3. Let len be ToUint32(lenValue).
-        var len = O.length >>> 0;
-
-        // 4. If IsCallable(callbackfn) is false, throw a TypeError exception.
-        if (typeof callbackfn !== 'function') {
-            throw new TypeError();
-        }
-
-        // 5. If thisArg was supplied, let T be thisArg; else let T be undefined.
-        if (arguments.length > 1) {
-            T = thisArg;
-        }
-
-        // 6. Let k be 0.
-        k = 0;
-
-        // 7. Repeat, while k < len
-        while (k < len) {
-
-            var kValue;
-
-            // a. Let Pk be ToString(k).
-            //   This is implicit for LHS operands of the in operator
-            // b. Let kPresent be the result of calling the HasProperty internal
-            //    method of O with argument Pk.
-            //   This step can be combined with c
-            // c. If kPresent is true, then
-            if (k in O) {
-
-                // i. Let kValue be the result of calling the Get internal method
-                //    of O with argument Pk.
-                kValue = O[k];
-
-                // ii. Let testResult be the result of calling the Call internal method
-                //     of callbackfn with T as the this value and argument list
-                //     containing kValue, k, and O.
-                var testResult = callbackfn.call(T, kValue, k, O);
-
-                // iii. If ToBoolean(testResult) is false, return false.
-                if (!testResult) {
-                    return false;
-                }
-            }
-            k++;
-        }
-        return true;
-    };
-}
