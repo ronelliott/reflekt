@@ -10,6 +10,11 @@ describe('parse', function() {
         }).should.throw('Function is not defined!');
     });
 
+    it('should parse a signature with no parameters', function() {
+        function foo() {}
+        parse(foo).should.eql([]);
+    });
+
     it('should parse a signature with a single function parameter', function() {
         function foo(bar) {}
         parse(foo).should.eql([ 'bar' ]);

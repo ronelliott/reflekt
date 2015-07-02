@@ -35,4 +35,11 @@ describe('ObjectResolver', function() {
         should(this.resolver.lifetimes.foo).not.be.ok;
         should(this.resolver.items.foo).not.be.ok;
     });
+
+    it('should remove items', function() {
+        this.resolver.add('foo', 'foo');
+        should(this.resolver.items.foo).be.ok;
+        this.resolver.remove('foo');
+        should(this.resolver.items.foo).not.be.ok;
+    });
 });
