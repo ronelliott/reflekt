@@ -173,6 +173,7 @@ function every(items, callback) {
 
 /**
  checks if the given function has the given argument(s)
+ @static
  @param {Function} fn - the function to check
  @param {String|Array} args - the args to check
  @returns {Boolean} true if the argument(s) are found in the function signature, false otherwise

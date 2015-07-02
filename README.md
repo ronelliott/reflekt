@@ -216,6 +216,7 @@ bar sauce
     * [.construct(klass, [resolver], [context])](#module_reflekt.construct) ⇒ <code>Object</code>
     * [.constructor([resolver])](#module_reflekt.constructor) ⇒ <code>function</code>
     * [.decorate(fn, [resolver], [context])](#module_reflekt.decorate) ⇒ <code>Object</code>
+    * [.has(fn, args)](#module_reflekt.has) ⇒ <code>Boolean</code>
     * [.injections(fn, [resolver])](#module_reflekt.injections) ⇒ <code>Array</code>
     * [.isKind(item, kind)](#module_reflekt.isKind) ⇒ <code>Boolean</code>
     * [.isArray(item)](#module_reflekt.isArray) ⇒ <code>Boolean</code>
@@ -223,7 +224,7 @@ bar sauce
     * [.isString(item)](#module_reflekt.isString) ⇒ <code>Boolean</code>
     * [.parse(fn)](#module_reflekt.parse) ⇒ <code>Array</code>
   * _inner_
-    * [~has(fn, args)](#module_reflekt..has) ⇒ <code>Boolean</code>
+    * [~every()](#module_reflekt..every) ⇒ <code>Boolean</code>
 
 <a name="module_reflekt.ObjectResolver"></a>
 ### reflekt.ObjectResolver() ⇒ <code>function</code>
@@ -336,6 +337,18 @@ creates a function that calls the given function using the given resolver in the
 | [resolver] | <code>function</code> &#124; <code>Object</code> | the resolver to use to resolve the function's arguments |
 | [context] | <code>Object</code> | the context to call the function in |
 
+<a name="module_reflekt.has"></a>
+### reflekt.has(fn, args) ⇒ <code>Boolean</code>
+checks if the given function has the given argument(s)
+
+**Kind**: static method of <code>[reflekt](#module_reflekt)</code>  
+**Returns**: <code>Boolean</code> - true if the argument(s) are found in the function signature, false otherwise  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| fn | <code>function</code> | the function to check |
+| args | <code>String</code> &#124; <code>Array</code> | the args to check |
+
 <a name="module_reflekt.injections"></a>
 ### reflekt.injections(fn, [resolver]) ⇒ <code>Array</code>
 resolves the function's arguments using the given resolver
@@ -405,15 +418,9 @@ parses the function's arguments, returning an array of the arguments found
 | --- | --- | --- |
 | fn | <code>function</code> &#124; <code>String</code> | the function to parse the arguments for |
 
-<a name="module_reflekt..has"></a>
-### reflekt~has(fn, args) ⇒ <code>Boolean</code>
-checks if the given function has the given argument(s)
+<a name="module_reflekt..every"></a>
+### reflekt~every() ⇒ <code>Boolean</code>
+calls the callback on each item in the array
 
 **Kind**: inner method of <code>[reflekt](#module_reflekt)</code>  
-**Returns**: <code>Boolean</code> - true if the argument(s) are found in the function signature, false otherwise  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| fn | <code>function</code> | the function to check |
-| args | <code>String</code> &#124; <code>Array</code> | the args to check |
-
+**Returns**: <code>Boolean</code> - true if all calls return true, or false otherwise  
