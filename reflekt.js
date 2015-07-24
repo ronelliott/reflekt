@@ -27,11 +27,11 @@ function ObjectResolver(items) {
      */
     function resolve(name) {
         if (name in lifetimes) {
-            lifetimes[name]--;
-
             if (lifetimes[name] <= 0) {
                 delete items[name];
                 delete lifetimes[name];
+            } else {
+                lifetimes[name]--;
             }
         }
 

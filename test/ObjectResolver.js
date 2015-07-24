@@ -31,7 +31,7 @@ describe('ObjectResolver', function() {
     it('should remove lifetime values and items when resolving an item and its lifetime has reached 0', function() {
         this.resolver.add('foo', 'foo', 1);
         this.resolver.lifetimes.foo.should.equal(1);
-        this.resolver('foo');
+        this.resolver('foo').should.equal('foo');
         should(this.resolver.lifetimes.foo).not.be.ok;
         should(this.resolver.items.foo).not.be.ok;
     });
