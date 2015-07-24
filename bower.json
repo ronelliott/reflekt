@@ -1,11 +1,11 @@
 {
   "name": "reflekt",
-  "version": "0.1.10",
+  "version": "0.3.1",
   "description": "Angular style function call reflection hotness.",
   "main": "index.js",
   "ignore": [
     "node_modules",
     "bower_components",
-    "test.js"
+    "test/*.js"
   ]
 }
