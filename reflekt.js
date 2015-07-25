@@ -179,6 +179,10 @@ function every(items, callback) {
  @returns {Boolean} true if the argument(s) are found in the function signature, false otherwise
  */
 function has(fn, args) {
+    if (!fn) {
+        return false;
+    }
+
     var parsed = parse(fn);
 
     if (isArray(args)) {
@@ -271,7 +275,7 @@ function parse(fn) {
         .replace(STRIP_COMMENTS, '')
         .match(FN_ARGS);
 
-    return matches[1]
+    return !isArray(matches) ? [] : matches[1]
         .split(FN_ARG_SPLIT)
         .filter(function(arg) {
             return arg.length > 0;

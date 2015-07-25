@@ -21,4 +21,12 @@ describe('has', function() {
     it('should return false if the function does not have all of the given args in its signature', function() {
         has(testFn, [ 'foo', 'bar', 'dar' ]).should.equal(false);
     });
+
+    it('should return false if the function is null', function() {
+        has(null, 'foo').should.equal(false);
+    });
+
+    it('should return false if the function is not defined', function() {
+        has(undefined, 'foo').should.equal(false);
+    });
 });
