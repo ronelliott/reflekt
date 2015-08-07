@@ -16,6 +16,51 @@ describe('ObjectResolver', function() {
         should(this.resolver('bar')).not.be.ok;
     });
 
+    it('should add items', function() {
+        should(this.resolver('bar')).not.be.ok;
+        this.resolver.add('bar', 'bar');
+        should(this.resolver('bar')).be.equal('bar');
+    });
+
+    it('should remove items', function() {
+        this.resolver.add('foo', 'foo');
+        should(this.resolver.items.foo).be.ok;
+        this.resolver.remove('foo');
+        should(this.resolver.items.foo).not.be.ok;
+    });
+
+    it('should add all items in an object', function() {
+        var that = this;
+
+        check([
+            'bar',
+            'dar',
+            'zar'
+        ], false);
+
+        this.resolver.add({
+            bar: true,
+            dar: true,
+            zar: true
+        });
+
+        check([
+            'bar',
+            'dar',
+            'zar'
+        ], true);
+
+        function check(values, shouldExist) {
+            values.forEach(function(name) {
+                if (shouldExist) {
+                    should(that.resolver(name)).equal(true);
+                } else {
+                    should(that.resolver(name)).equal(undefined);
+                }
+            });
+        }
+    });
+
     it('should store lifetimes values when adding an item', function() {
         this.resolver.add('foo', 'foo', 1);
         this.resolver.lifetimes.foo.should.equal(1);
@@ -33,13 +78,6 @@ describe('ObjectResolver', function() {
         this.resolver.lifetimes.foo.should.equal(1);
         this.resolver('foo').should.equal('foo');
         should(this.resolver.lifetimes.foo).not.be.ok;
-        should(this.resolver.items.foo).not.be.ok;
-    });
-
-    it('should remove items', function() {
-        this.resolver.add('foo', 'foo');
-        should(this.resolver.items.foo).be.ok;
-        this.resolver.remove('foo');
         should(this.resolver.items.foo).not.be.ok;
     });
 });

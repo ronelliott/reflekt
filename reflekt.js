@@ -40,15 +40,28 @@ function ObjectResolver(items) {
 
     /**
      adds an item using the given name, value and lifetime
-     @param {String} name - the name of the item to add
-     @param {Object} value - the value of the item to store
+     @param {String|Object} name - the name of the item to add. if an object is passed all items will be added
+     @param {Object} [value] - the value of the item to store
      @param {Integer} [lifetime] - how many times the item can be resolved before being removed automatically
      */
     function add(name, value, lifetime) {
-        items[name] = value;
+        if (isObject(name)) {
+            lifetime = value;
+            value = null;
+            Object.keys(name).forEach(function(n) {
+                var v = name[n];
+                doAdd(n, v, lifetime);
+            });
+        } else {
+            doAdd(name, value, lifetime);
+        }
 
-        if (lifetime) {
-            lifetimes[name] = lifetime;
+        function doAdd(n, v, l) {
+            items[n] = v;
+
+            if (l) {
+                lifetimes[n] = l;
+            }
         }
     }
 
