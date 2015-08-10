@@ -67,10 +67,16 @@ function ObjectResolver(items) {
 
     /**
      removes an item with the given name from the ObjectResolver
-     @param {String} name - the name of the item to remove
+     @param {String|Array} name - the name(s) of the item to remove
      */
     function remove(name) {
-        delete items[name];
+        if (isArray(name)) {
+            name.forEach(function(name) {
+                delete items[name];
+            });
+        } else {
+            delete items[name];
+        }
     }
 
     resolve.items = items;

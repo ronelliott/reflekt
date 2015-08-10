@@ -61,6 +61,44 @@ describe('ObjectResolver', function() {
         }
     });
 
+    it('should remove all items in an array', function() {
+        var that = this;
+
+        this.resolver.add({
+            bar: true,
+            dar: true,
+            zar: true
+        });
+
+        check([
+            'bar',
+            'dar',
+            'zar'
+        ], true);
+
+        this.resolver.remove([
+            'bar',
+            'dar',
+            'zar'
+        ]);
+
+        check([
+            'bar',
+            'dar',
+            'zar'
+        ], false);
+
+        function check(values, shouldExist) {
+            values.forEach(function(name) {
+                if (shouldExist) {
+                    should(that.resolver(name)).equal(true);
+                } else {
+                    should(that.resolver(name)).equal(undefined);
+                }
+            });
+        }
+    });
+
     it('should store lifetimes values when adding an item', function() {
         this.resolver.add('foo', 'foo', 1);
         this.resolver.lifetimes.foo.should.equal(1);
