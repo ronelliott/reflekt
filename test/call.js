@@ -63,4 +63,17 @@ describe('call', function() {
         call('spy', { spy: spy, bar: 'bar' });
         called.should.equal(true);
     });
+
+    it('should allow an array of resolvers to be passed', function() {
+        var called = false;
+
+        function spy(foo, bar) {
+            called = true;
+            foo.should.equal('foo');
+            bar.should.equal('bar');
+        }
+
+        call(spy, [ { bar: 'bar' }, { foo: 'foo' } ]);
+        called.should.equal(true);
+    });
 });

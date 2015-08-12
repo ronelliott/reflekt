@@ -116,7 +116,25 @@ function call(fn, resolver, context) {
 function caller(resolver) {
     resolver = resolver || {};
 
-    function theCaller(fn, context) {
+    function theCaller(fn, context, extras) {
+        if (extras) {
+            var resolvers = [];
+
+            if (isArray(resolver)) {
+                resolvers = resolvers.concat(resolver);
+            } else {
+                resolvers.push(resolver);
+            }
+
+            if (isArray(extras)) {
+                resolvers = resolvers.concat(extras);
+            } else {
+                resolvers.push(extras);
+            }
+
+            return call(fn, resolvers, context);
+        }
+
         return call(fn, resolver, context);
     }
 
@@ -126,6 +144,8 @@ function caller(resolver) {
     }
 
     theCaller.resolver = resolver;
+    theCaller.add = theCaller.resolver.add;
+    theCaller.remove = theCaller.resolver.remove;
     return theCaller;
 }
 
@@ -219,7 +239,7 @@ function has(fn, args) {
  resolves the function's arguments using the given resolver
  @static
  @param {Function|String|Array} fn - the function to resolve the arguments for
- @param {Function|Object} [resolver] - the resolver to use to resolve the function's arguments
+ @param {Function|Object|Array} [resolver] - the resolver(s) to use to resolve the function's arguments
  @returns {Array} the functions resolved arguments, in order of appearance in the function's signature
  */
 function injections(fn, resolver) {
@@ -233,7 +253,21 @@ function injections(fn, resolver) {
         params = parse(fn);
     }
 
-    return params.map(resolver);
+    if (isArray(resolver)) {
+        return params.map(function(name) {
+            var resolved;
+
+            resolver.forEach(function(res) {
+                if (!resolved) {
+                    resolved = res(name);
+                }
+            });
+
+            return resolved;
+        });
+    } else {
+        return params.map(resolver);
+    }
 }
 
 /**
@@ -306,28 +340,68 @@ function parse(fn) {
         });
 }
 
+/**
+ resolve the function from the given resolver(s) if the passed fn is a string,
+ otherwise the given fn is returned
+ @private
+ @static
+ @param {Function|String} fn - the function to resolve
+ @param {Function|Object|Array} [resolver] - the resolver(s) to use
+ @returns {Function} the resolved function, or undefined if not found
+ */
 function resolveFunction(fn, resolver) {
-    return isString(fn) ? resolver(fn) : fn;
+    if (isString(fn)) {
+        if (isArray(resolver)) {
+            var resolved;
+
+            resolver.map(function(res) {
+                if (!resolved) {
+                    resolved = verifyResolver(res)(fn);
+                }
+            });
+
+            fn = resolved;
+        } else {
+            fn = verifyResolver(resolver)(fn);
+        }
+    }
+
+    return fn;
 }
 
+/**
+ verifies the existence of a resolver, translating any objects to ObjectResolvers
+ @private
+ @static
+ @param {Function|Object|Array} [resolver] - the resolver(s) to verify the existence of
+ @returns {Function|Array} the resolver(s)
+ */
 function verifyResolver(resolver) {
+    if (isArray(resolver)) {
+        return resolver.map(function(res) {
+            return isObject(res) ? new ObjectResolver(res) : res;
+        });
+    }
+
     resolver = resolver || {};
     return isObject(resolver) ? new ObjectResolver(resolver || {}) : resolver;
 }
 
 module.exports = {
-    ObjectResolver: ObjectResolver,
-    call:           call,
-    caller:         caller,
-    construct:      construct,
-    constructor:    constructor,
-    decorate:       decorate,
-    every:          every,
-    has:            has,
-    injections:     injections,
-    isKind:         isKind,
-    isArray:        isArray,
-    isObject:       isObject,
-    isString:       isString,
-    parse:          parse
+    ObjectResolver:  ObjectResolver,
+    call:            call,
+    caller:          caller,
+    construct:       construct,
+    constructor:     constructor,
+    decorate:        decorate,
+    every:           every,
+    has:             has,
+    injections:      injections,
+    isKind:          isKind,
+    isArray:         isArray,
+    isObject:        isObject,
+    isString:        isString,
+    parse:           parse,
+    resolveFunction: resolveFunction,
+    verifyResolver:  verifyResolver
 };

@@ -74,4 +74,17 @@ describe('construct', function() {
         should(foo).be.ok;
         foo.foo.should.equal(true);
     });
+
+    it('should allow an array of resolvers to be passed', function() {
+        var called = false;
+
+        function Foo(foo, bar) {
+            called = true;
+            foo.should.equal('foo');
+            bar.should.equal('bar');
+        }
+
+        construct(Foo, [ { bar: 'bar' }, { foo: 'foo' } ]);
+        called.should.equal(true);
+    });
 });

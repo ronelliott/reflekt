@@ -73,4 +73,19 @@ describe('decorate', function() {
         decorated();
         called.should.equal(true);
     });
+
+    it('should allow an array of resolvers to be passed', function() {
+        var called = false;
+
+        function spy(foo, bar) {
+            called = true;
+            foo.should.equal('foo');
+            bar.should.equal('bar');
+        }
+
+        var decorated = decorate(spy, [ { bar: 'bar' }, { foo: 'foo' } ]);
+        decorated.should.be.a.Function;
+        decorated();
+        called.should.equal(true);
+    });
 });
