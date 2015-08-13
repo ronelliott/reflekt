@@ -16,6 +16,7 @@ var FN_ARGS        = /^function\s*[^\(]*\(\s*([^\)]*)\)/m,
  @returns {Function} the created ObjectResolver. see {@link ObjectResolver~resolve}.
  */
 function ObjectResolver(items) {
+    items = items || {};
     var lifetimes = {};
 
     /**

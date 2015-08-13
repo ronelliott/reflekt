@@ -8,6 +8,12 @@ describe('ObjectResolver', function() {
         this.resolver = new ObjectResolver({ foo: 'bar' });
     });
 
+    it('should accept no parameters', function() {
+        (function() {
+            new ObjectResolver().add('foo', 'foo');
+        }).should.not.throw();
+    });
+
     it('should resolve items found', function() {
         this.resolver('foo').should.equal('bar');
     });
