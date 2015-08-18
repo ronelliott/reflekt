@@ -185,15 +185,13 @@ describe('ObjectResolver', function() {
         this.resolver.add('foo', 'foo', 1);
         this.resolver.lifetimes.foo.should.equal(1);
         this.resolver('foo').should.equal('foo');
-        should(this.resolver.lifetimes.foo).not.be.ok;
-        should(this.resolver.items.foo).not.be.ok;
+        should(this.resolver('foo')).not.be.ok;
     });
 
     it('should remove lifetime values and items when resolving an item using get and its lifetime has reached 0', function() {
         this.resolver.add('foo', 'foo', 1);
         this.resolver.lifetimes.foo.should.equal(1);
         this.resolver.get('foo').should.equal('foo');
-        should(this.resolver.lifetimes.foo).not.be.ok;
-        should(this.resolver.items.foo).not.be.ok;
+        should(this.resolver('foo')).not.be.ok;
     });
 });
