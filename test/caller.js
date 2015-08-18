@@ -137,6 +137,21 @@ describe('caller', function() {
         called.should.equal(true);
     });
 
+    it('should allow an array of resolvers to be passed along with extra resolvers', function() {
+        var called = false,
+            theCaller = caller([ { bar: 'bar' }, { foo: 'foo' } ]);
+
+        function spy(foo, bar, dar) {
+            called = true;
+            foo.should.equal('foo');
+            bar.should.equal('bar');
+            dar.should.equal('dar');
+        }
+
+        theCaller(spy, null, { dar: 'dar' });
+        called.should.equal(true);
+    });
+
     it('should allow a function to be passed to augment the call', function() {
         var theCaller = caller(),
             called = false;
