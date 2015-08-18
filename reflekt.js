@@ -67,6 +67,26 @@ function ObjectResolver(items) {
     }
 
     /**
+     attempts to resolve an item with the given name.
+
+     NOTE: the ObjectResolver is callable directly, which is an alias to this function.
+     @param {String} name - the name of the item to add
+     @returns {Object|undefined} the resolved item, or undefined if it was not found
+     */
+    function get(name) {
+        return resolve(name);
+    }
+
+    /**
+     checks if the item exists in the resolver
+     @param {String} name - the name of the item to check
+     @returns {Boolean} true if the ObjectResolver has the item, false otherwise
+     */
+    function has(name) {
+        return name in items;
+    }
+
+    /**
      removes an item with the given name from the ObjectResolver
      @param {String|Array} name - the name(s) of the item to remove
      */
@@ -80,11 +100,24 @@ function ObjectResolver(items) {
         }
     }
 
+    /**
+     adds an item using the given name, value and lifetime
+     @param {String|Object} name - the name of the item to add. if an object is passed all items will be added
+     @param {Object} [value] - the value of the item to store
+     @param {Integer} [lifetime] - how many times the item can be resolved before being removed automatically
+     */
+    function set(name, value, lifetime) {
+        return add(name, value, lifetime);
+    }
+
     resolve.items = items;
     resolve.lifetimes = lifetimes;
     resolve.add = add;
+    resolve.get = get;
+    resolve.has = has;
     resolve.remove = remove;
     resolve.resolve = resolve;
+    resolve.set = set;
     resolve.add('resolver', resolve);
 
     return resolve;
