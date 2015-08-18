@@ -144,7 +144,7 @@ function call(fn, resolver, context) {
  creates a function that takes a function/string and a context, calling the function in the given context using the
  given resolver
  @static
- @param {Function|Object} [resolver] - the resolver to use to resolve the function's arguments
+ @param {Function|Object|Array} [resolver] - the resolver to use to resolve the function's arguments
  @returns {Function} the function that calls other functions
  */
 function caller(resolver) {
@@ -187,7 +187,7 @@ function caller(resolver) {
  constructs a new copy of the given klass using the given resolver and context
  @static
  @param {Function|String} klass - the object to construct a new copy of
- @param {Function|Object} [resolver] - the resolver to use to resolve the class constructor's arguments
+ @param {Function|Object|Array} [resolver] - the resolver to use to resolve the class constructor's arguments
  @param {Object} [context] - the context to call the class constructor in
  @returns {Object} the result of the call to the class constructor
  */
@@ -207,7 +207,7 @@ function construct(klass, resolver, context) {
  creates a function that takes a class and context, creating a new copy of the class in the given context using the
  given resolver
  @static
- @param {Function|Object} [resolver] - the resolver to use to resolve the class constructor's arguments
+ @param {Function|Object|Array} [resolver] - the resolver to use to resolve the class constructor's arguments
  @returns {Function} the function that constructs other objects
  */
 function constructor(resolver) {
@@ -220,7 +220,7 @@ function constructor(resolver) {
  creates a function that calls the given function using the given resolver in the given context
  @static
  @param {Function|String} fn - the function to resolve the arguments for
- @param {Function|Object} [resolver] - the resolver to use to resolve the function's arguments
+ @param {Function|Object|Array} [resolver] - the resolver to use to resolve the function's arguments
  @param {Object} [context] - the context to call the function in
  @returns {Object} a function that takes no arguments and returns the result of calling the given function
  */

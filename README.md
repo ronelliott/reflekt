@@ -209,8 +209,11 @@ bar sauce
   * _static_
     * [.ObjectResolver()](#module_reflekt.ObjectResolver) ⇒ <code>function</code>
       * [~resolve(name)](#module_reflekt.ObjectResolver..resolve) ⇒ <code>Object</code> &#124; <code>undefined</code>
-      * [~add(name, value, [lifetime])](#module_reflekt.ObjectResolver..add)
+      * [~add(name, [value], [lifetime])](#module_reflekt.ObjectResolver..add)
+      * [~get(name)](#module_reflekt.ObjectResolver..get) ⇒ <code>Object</code> &#124; <code>undefined</code>
+      * [~has(name)](#module_reflekt.ObjectResolver..has) ⇒ <code>Boolean</code>
       * [~remove(name)](#module_reflekt.ObjectResolver..remove)
+      * [~set(name, [value], [lifetime])](#module_reflekt.ObjectResolver..set)
     * [.call(fn, [resolver], [context])](#module_reflekt.call) ⇒ <code>Object</code>
     * [.caller([resolver])](#module_reflekt.caller) ⇒ <code>function</code>
     * [.construct(klass, [resolver], [context])](#module_reflekt.construct) ⇒ <code>Object</code>
@@ -236,8 +239,11 @@ creates a new ObjectResolver
 
   * [.ObjectResolver()](#module_reflekt.ObjectResolver) ⇒ <code>function</code>
     * [~resolve(name)](#module_reflekt.ObjectResolver..resolve) ⇒ <code>Object</code> &#124; <code>undefined</code>
-    * [~add(name, value, [lifetime])](#module_reflekt.ObjectResolver..add)
+    * [~add(name, [value], [lifetime])](#module_reflekt.ObjectResolver..add)
+    * [~get(name)](#module_reflekt.ObjectResolver..get) ⇒ <code>Object</code> &#124; <code>undefined</code>
+    * [~has(name)](#module_reflekt.ObjectResolver..has) ⇒ <code>Boolean</code>
     * [~remove(name)](#module_reflekt.ObjectResolver..remove)
+    * [~set(name, [value], [lifetime])](#module_reflekt.ObjectResolver..set)
 
 <a name="module_reflekt.ObjectResolver..resolve"></a>
 #### ObjectResolver~resolve(name) ⇒ <code>Object</code> &#124; <code>undefined</code>
@@ -253,16 +259,40 @@ attempts to resolve an item with the given name.
 | name | <code>String</code> | the name of the item to add |
 
 <a name="module_reflekt.ObjectResolver..add"></a>
-#### ObjectResolver~add(name, value, [lifetime])
+#### ObjectResolver~add(name, [value], [lifetime])
 adds an item using the given name, value and lifetime
 
 **Kind**: inner method of <code>[ObjectResolver](#module_reflekt.ObjectResolver)</code>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| name | <code>String</code> | the name of the item to add |
-| value | <code>Object</code> | the value of the item to store |
+| name | <code>String</code> &#124; <code>Object</code> | the name of the item to add. if an object is passed all items will be added |
+| [value] | <code>Object</code> | the value of the item to store |
 | [lifetime] | <code>Integer</code> | how many times the item can be resolved before being removed automatically |
+
+<a name="module_reflekt.ObjectResolver..get"></a>
+#### ObjectResolver~get(name) ⇒ <code>Object</code> &#124; <code>undefined</code>
+attempts to resolve an item with the given name.
+
+     NOTE: the ObjectResolver is callable directly, which is an alias to this function.
+
+**Kind**: inner method of <code>[ObjectResolver](#module_reflekt.ObjectResolver)</code>  
+**Returns**: <code>Object</code> &#124; <code>undefined</code> - the resolved item, or undefined if it was not found  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>String</code> | the name of the item to add |
+
+<a name="module_reflekt.ObjectResolver..has"></a>
+#### ObjectResolver~has(name) ⇒ <code>Boolean</code>
+checks if the item exists in the resolver
+
+**Kind**: inner method of <code>[ObjectResolver](#module_reflekt.ObjectResolver)</code>  
+**Returns**: <code>Boolean</code> - true if the ObjectResolver has the item, false otherwise  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>String</code> | the name of the item to check |
 
 <a name="module_reflekt.ObjectResolver..remove"></a>
 #### ObjectResolver~remove(name)
@@ -272,7 +302,19 @@ removes an item with the given name from the ObjectResolver
 
 | Param | Type | Description |
 | --- | --- | --- |
-| name | <code>String</code> | the name of the item to remove |
+| name | <code>String</code> &#124; <code>Array</code> | the name(s) of the item to remove |
+
+<a name="module_reflekt.ObjectResolver..set"></a>
+#### ObjectResolver~set(name, [value], [lifetime])
+adds an item using the given name, value and lifetime
+
+**Kind**: inner method of <code>[ObjectResolver](#module_reflekt.ObjectResolver)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>String</code> &#124; <code>Object</code> | the name of the item to add. if an object is passed all items will be added |
+| [value] | <code>Object</code> | the value of the item to store |
+| [lifetime] | <code>Integer</code> | how many times the item can be resolved before being removed automatically |
 
 <a name="module_reflekt.call"></a>
 ### reflekt.call(fn, [resolver], [context]) ⇒ <code>Object</code>
@@ -297,7 +339,7 @@ creates a function that takes a function/string and a context, calling the funct
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [resolver] | <code>function</code> &#124; <code>Object</code> | the resolver to use to resolve the function's arguments |
+| [resolver] | <code>function</code> &#124; <code>Object</code> &#124; <code>Array</code> | the resolver to use to resolve the function's arguments |
 
 <a name="module_reflekt.construct"></a>
 ### reflekt.construct(klass, [resolver], [context]) ⇒ <code>Object</code>
@@ -309,7 +351,7 @@ constructs a new copy of the given klass using the given resolver and context
 | Param | Type | Description |
 | --- | --- | --- |
 | klass | <code>function</code> &#124; <code>String</code> | the object to construct a new copy of |
-| [resolver] | <code>function</code> &#124; <code>Object</code> | the resolver to use to resolve the class constructor's arguments |
+| [resolver] | <code>function</code> &#124; <code>Object</code> &#124; <code>Array</code> | the resolver to use to resolve the class constructor's arguments |
 | [context] | <code>Object</code> | the context to call the class constructor in |
 
 <a name="module_reflekt.constructor"></a>
@@ -322,7 +364,7 @@ creates a function that takes a class and context, creating a new copy of the cl
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [resolver] | <code>function</code> &#124; <code>Object</code> | the resolver to use to resolve the class constructor's arguments |
+| [resolver] | <code>function</code> &#124; <code>Object</code> &#124; <code>Array</code> | the resolver to use to resolve the class constructor's arguments |
 
 <a name="module_reflekt.decorate"></a>
 ### reflekt.decorate(fn, [resolver], [context]) ⇒ <code>Object</code>
@@ -334,7 +376,7 @@ creates a function that calls the given function using the given resolver in the
 | Param | Type | Description |
 | --- | --- | --- |
 | fn | <code>function</code> &#124; <code>String</code> | the function to resolve the arguments for |
-| [resolver] | <code>function</code> &#124; <code>Object</code> | the resolver to use to resolve the function's arguments |
+| [resolver] | <code>function</code> &#124; <code>Object</code> &#124; <code>Array</code> | the resolver to use to resolve the function's arguments |
 | [context] | <code>Object</code> | the context to call the function in |
 
 <a name="module_reflekt.has"></a>
@@ -359,7 +401,7 @@ resolves the function's arguments using the given resolver
 | Param | Type | Description |
 | --- | --- | --- |
 | fn | <code>function</code> &#124; <code>String</code> &#124; <code>Array</code> | the function to resolve the arguments for |
-| [resolver] | <code>function</code> &#124; <code>Object</code> | the resolver to use to resolve the function's arguments |
+| [resolver] | <code>function</code> &#124; <code>Object</code> &#124; <code>Array</code> | the resolver(s) to use to resolve the function's arguments |
 
 <a name="module_reflekt.isKind"></a>
 ### reflekt.isKind(item, kind) ⇒ <code>Boolean</code>
