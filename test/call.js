@@ -76,4 +76,30 @@ describe('call', function() {
         call(spy, [ { bar: 'bar' }, { foo: 'foo' } ]);
         called.should.equal(true);
     });
+
+    it('should allow a function to return null', function() {
+        var called = false;
+
+        function spy() {
+            called = true;
+            return null;
+        }
+
+        var result = call(spy);
+        called.should.equal(true);
+        should(result).equal(null);
+    });
+
+    it('should allow a function to return undefined', function() {
+        var called = false;
+
+        function spy() {
+            called = true;
+            return undefined;
+        }
+
+        var result = call(spy);
+        called.should.equal(true);
+        should(result).equal(undefined);
+    });
 });

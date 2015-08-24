@@ -137,7 +137,7 @@ function call(fn, resolver, context) {
     context = context || fn;
     var params = injections(fn, resolver);
     fn = isArray(fn) ? fn[fn.length - 1] : fn;
-    return fn.apply(context, params) || context;
+    return fn.apply(context, params);
 }
 
 /**
