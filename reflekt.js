@@ -124,6 +124,20 @@ function ObjectResolver(items) {
 }
 
 /**
+ calls the callback on each item in the array
+ @returns {Boolean} true if any calls return true, or false otherwise
+ */
+function any(items, callback) {
+    for (var i = 0; i < items.length; i++) {
+        if (callback(items[i])) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
  calls the function using the given resolver and context
  @static
  @param {Function|String|Array} fn - the function to call
@@ -249,17 +263,25 @@ function every(items, callback) {
  @static
  @param {Function} fn - the function to check
  @param {String|Array} args - the args to check
+ @param {Boolean} [allOrNone] - if true, all args given must be present. if false, any of the args may be present.
+ the default is true.
  @returns {Boolean} true if the argument(s) are found in the function signature, false otherwise
  */
-function has(fn, args) {
+function has(fn, args, allOrNone) {
     if (!fn) {
         return false;
     }
 
     var parsed = parse(fn);
 
+    allOrNone = isBoolean(allOrNone) ? allOrNone : true;
+
     if (isArray(args)) {
-        return every(args, check);
+        if (allOrNone) {
+            return every(args, check);
+        } else {
+            return any(args, check);
+        }
     } else {
         return check(args);
     }
@@ -324,6 +346,16 @@ function isKind(item, kind) {
  */
 function isArray(item) {
     return (Array.isArray && Array.isArray(item)) || isKind(item, '[object Array]');
+}
+
+/**
+ checks if the given item is a boolean
+ @static
+ @param {Object} item - the item to check the type of
+ @returns {Boolean} true if the item is a boolean, false otherwise
+ */
+function isBoolean(item) {
+    return isKind(item, '[object Boolean]');
 }
 
 /**
@@ -423,6 +455,7 @@ function verifyResolver(resolver) {
 
 module.exports = {
     ObjectResolver:  ObjectResolver,
+    any:             any,
     call:            call,
     caller:          caller,
     construct:       construct,
@@ -433,6 +466,7 @@ module.exports = {
     injections:      injections,
     isKind:          isKind,
     isArray:         isArray,
+    isBoolean:       isBoolean,
     isObject:        isObject,
     isString:        isString,
     parse:           parse,

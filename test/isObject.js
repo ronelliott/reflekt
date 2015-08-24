@@ -8,6 +8,10 @@ describe('isObject', function() {
         isObject([]).should.equal(false);
     });
 
+    it('should return false if the given item is a boolean', function() {
+        isObject(true).should.equal(false);
+    });
+
     it('should return false if the given item is a function', function() {
         isObject(function() {}).should.equal(false);
     });

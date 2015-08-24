@@ -22,6 +22,10 @@ describe('has', function() {
         has(testFn, [ 'foo', 'bar', 'dar' ]).should.equal(false);
     });
 
+    it('should return true if the function does not have all of the given args in its signature and allOrNone is set to false', function() {
+        has(testFn, [ 'foo', 'bar', 'dar' ], false).should.equal(true);
+    });
+
     it('should return false if the function is null', function() {
         has(null, 'foo').should.equal(false);
     });
