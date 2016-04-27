@@ -466,3 +466,5 @@ calls the callback on each item in the array
 
 **Kind**: inner method of <code>[reflekt](#module_reflekt)</code>  
 **Returns**: <code>Boolean</code> - true if all calls return true, or false otherwise  
+
+[![Analytics](https://ga-beacon.appspot.com/UA-59523757-2/reflekt/readme?pixel)](https://github.com/igrigorik/ga-beacon)
