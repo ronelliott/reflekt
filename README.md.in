@@ -205,3 +205,5 @@ bar sauce
 {{#module name="reflekt"}}
 {{>docs}}
 {{/module}}
+
+[![Analytics](https://ga-beacon.appspot.com/UA-59523757-2/go-cli/readme?pixel)](https://github.com/igrigorik/ga-beacon)
