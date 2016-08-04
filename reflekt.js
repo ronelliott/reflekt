@@ -4,7 +4,7 @@
  @module reflekt
  */
 
-var FN_ARGS        = /^function\s*[^\(]*\(\s*([^\)]*)\)/m,
+var FN_ARGS        = /^[function]?\s*[^\(]*\(\s*([^\)]*)\)/m,
     FN_ARG_SPLIT   = /,/,
     FN_ARG         = /^\s*(_?)(\S+?)\1\s*$/,
     STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;

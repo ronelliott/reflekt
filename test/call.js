@@ -14,6 +14,15 @@ describe('call', function() {
         call(spy);
         called.should.equal(true);
     });
+    it('should call the given arrow function', function() {
+        var called = false,
+            spy = () => {
+                called = true;
+            }
+
+        call(spy);
+        called.should.equal(true);
+    });
 
     it('should allow an array to be passed with resolution names and the function to be called', function() {
         var called = false;
