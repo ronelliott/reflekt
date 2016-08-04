@@ -124,7 +124,11 @@ function ObjectResolver(items) {
 }
 
 /**
- calls the callback on each item in the array
+ calls the callback on each item in the array, stopping when the first callback
+ returns true
+ @static
+ @param {Array} items - the items to call the callback with
+ @param {Function} callback - the function to call with each item
  @returns {Boolean} true if any calls return true, or false otherwise
  */
 function any(items, callback) {
@@ -246,6 +250,9 @@ function decorate(fn, resolver, context) {
 
 /**
  calls the callback on each item in the array
+ @static
+ @param {Array} items - the items to call the callback with
+ @param {Function} callback - the function to call with each item
  @returns {Boolean} true if all calls return true, or false otherwise
  */
 function every(items, callback) {

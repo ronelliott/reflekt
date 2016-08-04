@@ -207,30 +207,28 @@ bar sauce
 ## reflekt
 
 * [reflekt](#module_reflekt)
-    * _static_
-        * [.ObjectResolver()](#module_reflekt.ObjectResolver) ⇒ <code>function</code>
-            * [~resolve(name)](#module_reflekt.ObjectResolver..resolve) ⇒ <code>Object</code> &#124; <code>undefined</code>
-            * [~add(name, [value], [lifetime])](#module_reflekt.ObjectResolver..add)
-            * [~get(name)](#module_reflekt.ObjectResolver..get) ⇒ <code>Object</code> &#124; <code>undefined</code>
-            * [~has(name)](#module_reflekt.ObjectResolver..has) ⇒ <code>Boolean</code>
-            * [~remove(name)](#module_reflekt.ObjectResolver..remove)
-            * [~set(name, [value], [lifetime])](#module_reflekt.ObjectResolver..set)
-        * [.call(fn, [resolver], [context])](#module_reflekt.call) ⇒ <code>Object</code>
-        * [.caller([resolver])](#module_reflekt.caller) ⇒ <code>function</code>
-        * [.construct(klass, [resolver], [context])](#module_reflekt.construct) ⇒ <code>Object</code>
-        * [.constructor([resolver])](#module_reflekt.constructor) ⇒ <code>function</code>
-        * [.decorate(fn, [resolver], [context])](#module_reflekt.decorate) ⇒ <code>Object</code>
-        * [.has(fn, args, [allOrNone])](#module_reflekt.has) ⇒ <code>Boolean</code>
-        * [.injections(fn, [resolver])](#module_reflekt.injections) ⇒ <code>Array</code>
-        * [.isKind(item, kind)](#module_reflekt.isKind) ⇒ <code>Boolean</code>
-        * [.isArray(item)](#module_reflekt.isArray) ⇒ <code>Boolean</code>
-        * [.isBoolean(item)](#module_reflekt.isBoolean) ⇒ <code>Boolean</code>
-        * [.isObject(item)](#module_reflekt.isObject) ⇒ <code>Boolean</code>
-        * [.isString(item)](#module_reflekt.isString) ⇒ <code>Boolean</code>
-        * [.parse(fn)](#module_reflekt.parse) ⇒ <code>Array</code>
-    * _inner_
-        * [~any()](#module_reflekt..any) ⇒ <code>Boolean</code>
-        * [~every()](#module_reflekt..every) ⇒ <code>Boolean</code>
+    * [.ObjectResolver()](#module_reflekt.ObjectResolver) ⇒ <code>function</code>
+        * [~resolve(name)](#module_reflekt.ObjectResolver..resolve) ⇒ <code>Object</code> &#124; <code>undefined</code>
+        * [~add(name, [value], [lifetime])](#module_reflekt.ObjectResolver..add)
+        * [~get(name)](#module_reflekt.ObjectResolver..get) ⇒ <code>Object</code> &#124; <code>undefined</code>
+        * [~has(name)](#module_reflekt.ObjectResolver..has) ⇒ <code>Boolean</code>
+        * [~remove(name)](#module_reflekt.ObjectResolver..remove)
+        * [~set(name, [value], [lifetime])](#module_reflekt.ObjectResolver..set)
+    * [.any(items, callback)](#module_reflekt.any) ⇒ <code>Boolean</code>
+    * [.call(fn, [resolver], [context])](#module_reflekt.call) ⇒ <code>Object</code>
+    * [.caller([resolver])](#module_reflekt.caller) ⇒ <code>function</code>
+    * [.construct(klass, [resolver], [context])](#module_reflekt.construct) ⇒ <code>Object</code>
+    * [.constructor([resolver])](#module_reflekt.constructor) ⇒ <code>function</code>
+    * [.decorate(fn, [resolver], [context])](#module_reflekt.decorate) ⇒ <code>Object</code>
+    * [.every(items, callback)](#module_reflekt.every) ⇒ <code>Boolean</code>
+    * [.has(fn, args, [allOrNone])](#module_reflekt.has) ⇒ <code>Boolean</code>
+    * [.injections(fn, [resolver])](#module_reflekt.injections) ⇒ <code>Array</code>
+    * [.isKind(item, kind)](#module_reflekt.isKind) ⇒ <code>Boolean</code>
+    * [.isArray(item)](#module_reflekt.isArray) ⇒ <code>Boolean</code>
+    * [.isBoolean(item)](#module_reflekt.isBoolean) ⇒ <code>Boolean</code>
+    * [.isObject(item)](#module_reflekt.isObject) ⇒ <code>Boolean</code>
+    * [.isString(item)](#module_reflekt.isString) ⇒ <code>Boolean</code>
+    * [.parse(fn)](#module_reflekt.parse) ⇒ <code>Array</code>
 
 <a name="module_reflekt.ObjectResolver"></a>
 
@@ -326,6 +324,20 @@ adds an item using the given name, value and lifetime
 | [value] | <code>Object</code> | the value of the item to store |
 | [lifetime] | <code>Integer</code> | how many times the item can be resolved before being removed automatically |
 
+<a name="module_reflekt.any"></a>
+
+### reflekt.any(items, callback) ⇒ <code>Boolean</code>
+calls the callback on each item in the array, stopping when the first callback
+ returns true
+
+**Kind**: static method of <code>[reflekt](#module_reflekt)</code>  
+**Returns**: <code>Boolean</code> - true if any calls return true, or false otherwise  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| items | <code>Array</code> | the items to call the callback with |
+| callback | <code>function</code> | the function to call with each item |
+
 <a name="module_reflekt.call"></a>
 
 ### reflekt.call(fn, [resolver], [context]) ⇒ <code>Object</code>
@@ -393,6 +405,19 @@ creates a function that calls the given function using the given resolver in the
 | fn | <code>function</code> &#124; <code>String</code> | the function to resolve the arguments for |
 | [resolver] | <code>function</code> &#124; <code>Object</code> &#124; <code>Array</code> | the resolver to use to resolve the function's arguments |
 | [context] | <code>Object</code> | the context to call the function in |
+
+<a name="module_reflekt.every"></a>
+
+### reflekt.every(items, callback) ⇒ <code>Boolean</code>
+calls the callback on each item in the array
+
+**Kind**: static method of <code>[reflekt](#module_reflekt)</code>  
+**Returns**: <code>Boolean</code> - true if all calls return true, or false otherwise  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| items | <code>Array</code> | the items to call the callback with |
+| callback | <code>function</code> | the function to call with each item |
 
 <a name="module_reflekt.has"></a>
 
@@ -495,19 +520,5 @@ parses the function's arguments, returning an array of the arguments found
 | --- | --- | --- |
 | fn | <code>function</code> &#124; <code>String</code> | the function to parse the arguments for |
 
-<a name="module_reflekt..any"></a>
-
-### reflekt~any() ⇒ <code>Boolean</code>
-calls the callback on each item in the array
-
-**Kind**: inner method of <code>[reflekt](#module_reflekt)</code>  
-**Returns**: <code>Boolean</code> - true if any calls return true, or false otherwise  
-<a name="module_reflekt..every"></a>
-
-### reflekt~every() ⇒ <code>Boolean</code>
-calls the callback on each item in the array
-
-**Kind**: inner method of <code>[reflekt](#module_reflekt)</code>  
-**Returns**: <code>Boolean</code> - true if all calls return true, or false otherwise  
 
 [![Analytics](https://ga-beacon.appspot.com/UA-59523757-2/reflekt/readme?pixel)](https://github.com/igrigorik/ga-beacon)
