@@ -26,7 +26,6 @@
     "PhantomJS"
   ],
   "launch_in_ci": [
-    "istanbul",
-    "PhantomJS"
+    "istanbul"
   ]
 }
